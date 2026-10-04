@@ -160,12 +160,30 @@
     cmd: /bin/bash /vagrant/tools/setup_garbd.sh "{{ master_ip }}" root "{{ db_password }}" "{{'cluster1' if cluster_name == '' else cluster_name}}"
     creates: /root/garbd.configured
 
+- name: Enable Percona XtraBackup repo
+  when: >
+    percona_xtrabackup_version != "" and xtrabackup_package_info and
+    xtrabackup_package_info['repo_enable_str'] | default('') | length > 0 and
+    (ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'OracleLinux')
+  block:
+    - name: Install percona-release for XtraBackup
+      when: xtrabackup_package_info['repo_url'] | default('') | length > 0
+      yum:
+        name: "{{ xtrabackup_package_info['repo_url'] }}"
+        disable_gpg_check: yes
+        state: present
+    - name: enable XtraBackup series repo
+      shell:
+        cmd: >-
+          sed -i -e 's/SUPPORTED_ARCHS="i386 noarch x86_64 sources"/SUPPORTED_ARCHS="i386 noarch x86_64 aarch64 sources"/' /usr/bin/percona-release;
+          /usr/bin/percona-release enable "{{ xtrabackup_package_info['repo_enable_str'] }}"
+        creates: "{{ xtrabackup_package_info['repo_file'] }}"
+
 - name: install Percona XtraBackup
   when: percona_xtrabackup_version != "" and "packages" in xtrabackup_package_info
   package:
-    name: "{{ item }}"
+    name: "{{ xtrabackup_package_info['packages'] }}"
     state: present
-  with_items: "{{ xtrabackup_package_info['packages'] }}"
 
 - name: InnoDB ruby
   when: innodb_ruby_version != ''

@@ -1,6 +1,6 @@
 # Products and aliases
 
-> Verified on 2026-09-04 against `anydbver_version.sql` and `anydbver deploy help keywords`. Run that command for the live, authoritative list.
+> Verified on 2026-10-04 against `anydbver_version.sql` and `anydbver deploy help keywords`. Run that command for the live, authoritative list.
 >
 > To discover deployable versions, prefer **`anydbver versions [software]`** (added in v0.1.37): `anydbver versions` for an overview, `anydbver versions psmdb` for the full per-major list, plus `--latest`, `--os`, `--arch`, `--all`, `--json`.
 
@@ -123,24 +123,30 @@ anydbver --version                 # binary version
 
 ## Default versions (snapshot, will rot)
 
-These were the latest defaults on 2026-08-21. They shift between releases as the version DB updates — **always pin** when reproducing a bug.
+These were the latest defaults on 2026-10-04. They shift between releases as the version DB updates — **always pin** when reproducing a bug.
 
 | Product | `latest` resolves to (approx.) |
 |---------|-------------------------------|
-| `ps`            | 8.4.x         |
-| `mysql`         | 26.7.x        |
+| `ps`            | 9.7.x         |
+| `mysql`         | 9.7.x         |
+| `pxc`           | 9.7.x         |
+| `pxb`           | 9.7.x (RC1)   |
 | `mariadb`       | 12.3.x        |
-| `pxc`           | 8.4.x         |
 | `pg`            | 18.x          |
 | `ppg`           | 18.x          |
 | `psmdb`         | 8.3.x         |
 | `pmm`           | 3.x           |
 | `pmm-client`    | `3.x.y-1` (bare `3.x.y` won't resolve) |
 
-**v0.1.39 moved three of these onto a newer series.** `psmdb:latest` is 8.3 now,
-not 8.0; `mysql:latest` is 26.7 (MySQL switched to calendar versioning after
-9.7); `mariadb:latest` is 12.3, not 11.8. If someone wants the previous LTS-ish
-line, pin it: `psmdb:8.0`, `mysql:8.4`, `mariadb:11.8`.
+**9.7 is now the bare / `:latest` default** for `ps`, `mysql`, `pxc`, and `pxb`
+(XtraBackup 9.7.1 is still RC1 upstream). MySQL also ships a 26.7 innovation
+row — pin `mysql:26.7` if you want calendar versioning. Previous LTS-ish lines:
+`ps:8.4`, `mysql:8.4`, `pxc:8.4`, `pxb:8.4`, `psmdb:8.0`, `mariadb:11.8`.
+
+Router and shell ride on the server version row: `ps:9.7,mysql-router` /
+`mysql:9.7,mysql-router` pulls `percona-mysql-router` / `mysql-router-community`
+plus shell packages from that same 9.7 row (shell also installs automatically
+for Group Replication).
 
 If a deploy command says `:latest` and the user is reproducing a bug, **replace it with an explicit patch version** and confirm with `anydbver deploy help <keyword>` which patch your build's version DB has.
 
@@ -149,8 +155,8 @@ If a deploy command says `:latest` and the user is reproducing a bug, **replace 
 Containers share the host kernel, so an arm64 Mac can only install aarch64
 packages, and the version DB carries aarch64 rows for a subset of what x86_64
 has. `ps`, `mysql`, `mariadb`, `psmdb`, `pbm`, `pg`, `ppg` and `pmm-client` all
-have aarch64 builds. **`pxc` and `pxb` (Percona XtraBackup) have none**, so any
-PXC topology or xtrabackup step is x86_64 only.
+have aarch64 builds. **`pxc` 9.7 and `pxb` 9.7 have aarch64**; older
+`pxc:8.4` / `pxb:8.4` / `pxb:8.0` rows are still x86_64 only.
 
 Check before promising a version:
 

@@ -237,6 +237,20 @@
         "Verification with pgbackrest info --stanza=db inside the pgbackrest-dedicated repo host pod, and kubectl get svc for the LoadBalancer addresses",
         "Does NOT invent a backup= or schedule= option, and does NOT claim PMM works with Crunchy"
       ]
+    },
+    {
+      "id": "mysql-97-ps-pxb-router-shell",
+      "prompt": "Spin up Percona Server 9.7 with XtraBackup, and put MySQL Router in front of a 2-node Group Replication cluster. Use the new :latest defaults where it makes sense.",
+      "expected_output": "A deploy that uses ps:9.7 (or ps:latest / bare ps, which now resolve to 9.7) with group-replication, a second GR member, a mysql-router node, and percona-xtrabackup/pxb:9.7 (or :latest) on a PS node. Mentions that shell/router packages come from the 9.7 server row, and that PXB 9.7.1 is still RC1 upstream.",
+      "expectations": [
+        "Uses ps:9.7 or ps:latest / bare ps (default is now 9.7) — NOT pinned back to 8.4 unless explaining the pin",
+        "Group Replication: first node has group-replication with NO master=; joiners add master=node0,group-replication",
+        "mysql-router is a comma option on a ps/mysql node (e.g. ps:9.7,mysql-router,master=node0), not a standalone keyword",
+        "Includes percona-xtrabackup:9.7 or pxb:9.7 / pxb:latest (alias pxb is valid)",
+        "Notes that Percona mysql-shell / mysql-router for 9.7 ride on the percona_server_version row (installed with GR / mysql-router)",
+        "Mentions PXB 9.7.1 is RC1 upstream (or that pxb:latest resolves to 9.7.1-rc1)",
+        "Does NOT claim mysql:latest is 26.7 — mysql:latest / bare mysql now default to 9.7 (pin mysql:26.7 for innovation)"
+      ]
     }
   ]
 }

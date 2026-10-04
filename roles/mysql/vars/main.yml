@@ -20,7 +20,7 @@ package_info_sql: >
   else "" }}
 
 xtrabackup_package_info_sql: >
-  {{"select * from percona_xtrabackup_version where version like '"+ percona_xtrabackup_version +"%' and os='"+ dist +"' ORDER BY CAST(SUBSTR(version,1,INSTR(version,'.')-1) as integer) DESC, CAST(SUBSTR(version,INSTR(version,'.')+1, INSTR(SUBSTR(version,INSTR(version,'.')+1),'.')-1 ) AS INTEGER) DESC, CAST( SUBSTR(version, INSTR(version,'.')+1+ INSTR(SUBSTR(version,INSTR(version,'.')+1),'.')  ) AS INTEGER) DESC LIMIT 1"
+  {{"select * from percona_xtrabackup_version where version like '"+ percona_xtrabackup_version +"%' and os='"+ dist +"' and arch='"+ansible_architecture+"' ORDER BY CAST(SUBSTR(version,1,INSTR(version,'.')-1) as integer) DESC, CAST(SUBSTR(version,INSTR(version,'.')+1, INSTR(SUBSTR(version,INSTR(version,'.')+1),'.')-1 ) AS INTEGER) DESC, CAST( SUBSTR(version, INSTR(version,'.')+1+ INSTR(SUBSTR(version,INSTR(version,'.')+1),'.')  ) AS INTEGER) DESC LIMIT 1"
   if percona_xtrabackup_version != ""
   else "" }}
 
